@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router(); 
 
 const ProductManager = require("../controllers/product-manager.js"); 
-const productManager = new ProductManager("./src/models/productos.json");
+const productManager = new ProductManager("./src/models/products.json");
 
 router.get("/products", async (req, res) => {
     try {
