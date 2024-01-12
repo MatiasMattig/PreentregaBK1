@@ -44,4 +44,63 @@ router.get("/products/:pid", async (req, res) => {
     }
 })
 
+router.post("/products", async (req, res) => {
+    try {
+        const { title, description, price, img, code, stock } = req.body;
+        const newProduct = await productManager.addProduct({ title, description, price, img, code, stock });
+        res.json(newProduct);
+    } catch (error) {
+        console.error("Error al crear producto", error);
+        res.status(500).json({
+            error: "Error interno del servidor"
+        });
+    }
+});
+
+router.put("/products/:pid", async (req, res) => {
+    const id = req.params.pid;
+
+    try {
+        const { title, description, price, img, code, stock } = req.body;
+        const updatedProduct = await productManager.updateProduct(parseInt(id), { title, description, price, img, code, stock });
+        
+        if (!updatedProduct) {
+            return res.json({
+                error: "Producto no encontrado"
+            });
+        }
+
+        res.json(updatedProduct);
+    } catch (error) {
+        console.error("Error al actualizar producto", error);
+        res.status(500).json({
+            error: "Error interno del servidor"
+        });
+    }
+})
+
+router.delete("/products/:pid", async (req, res) => {
+    const id = req.params.pid;
+
+    try {
+        const deletedProduct = await productManager.deleteProduct(parseInt(id));
+
+        if (!deletedProduct) {
+            return res.json({
+                error: "Producto no encontrado"
+            });
+        }
+
+        res.json({
+            message: "Producto eliminado exitosamente",
+            deletedProduct
+        });
+    } catch (error) {
+        console.error("Error al eliminar producto", error);
+        res.status(500).json({
+            error: "Error interno del servidor"
+        });
+    }
+});
+
 module.exports = router; 
