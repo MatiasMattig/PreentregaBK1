@@ -16,13 +16,24 @@ router.get("/carts", async (req, res) => {
     }
 });
 
-router.get("/carts/:cartId/products", async (req, res) => {
+router.post("/carts/:cartId/products", async (req, res) => {
     const cartId = req.params.cartId;
+    const productId = req.body.productId;
+    const quantity = req.body.quantity;
+
+    if (!productId || !quantity) {
+        return res.status(400).json({
+            error: "Se requiere el ID del producto y la cantidad."
+        });
+    }
+
     try {
-        const cartProducts = await cartManager.getCartProducts(parseInt(cartId));
-        res.json(cartProducts);
+        await cartManager.addProductToCart(parseInt(cartId), parseInt(productId), parseInt(quantity));
+        res.json({
+            message: "Producto agregado al carrito exitosamente"
+        });
     } catch (error) {
-        console.error("Error al obtener productos del carrito", error);
+        console.error("Error al agregar producto al carrito", error);
         res.status(500).json({
             error: "Error interno del servidor"
         });
